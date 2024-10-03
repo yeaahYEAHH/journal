@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal</title>
+</head>
+
+<body>
+    <canvas id="drawingCanvas" width="800" height="500"></canvas>
+</body>
+
+<style type="text/css">
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #drawingCanvas {
+      border: #000000 1px solid;
+    }
+</style>
+
+<script>
+const canvas = document.getElementById('drawingCanvas');
+const ctx = canvas.getContext('2d');
+
+// Переменные для отслеживания состояния кисточки
+let painting = false;
+
+// Начать рисование
+function startPosition(e) {
+    painting = true;
+    draw(e); // Чтобы сразу нарисовать точку, где нажата кнопка мыши
+}
+
+// Завершить рисование
+function endPosition() {
+    painting = false;
+    ctx.beginPath(); // Прерывает текущий путь (для прерывистых линий)
+}
+
+// Рисовать
+function draw(e) {
+    if (!painting) return; // Если кнопка не нажата, не рисовать
+
+    // Настройки кисти
+    ctx.lineWidth = 1; // Толщина линии
+    ctx.strokeStyle = 'black'; // Цвет кисти
+
+    // Получаем координаты мыши относительно холста
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Рисование
+    ctx.lineTo(x, y); // Линия до текущей позиции мыши
+    ctx.stroke(); // Отобразить линию
+    ctx.beginPath(); // Новая точка начала линии
+    ctx.moveTo(x, y); // Начать рисовать с текущей позиции
+}
+
+// Обработчики событий мыши
+canvas.addEventListener('mousedown', startPosition); // Нажатие кнопки мыши
+canvas.addEventListener('mouseup', endPosition); // Отпускание кнопки мыши
+canvas.addEventListener('mousemove', draw); // Движение мыши
+
+</script>
+
+</html>
