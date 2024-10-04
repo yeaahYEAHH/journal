@@ -7,7 +7,10 @@
 </head>
 
 <body>
-    <canvas id="drawingCanvas" width="800" height="500"></canvas>
+    <canvas id="drawingCanvas" width="400" height="400"></canvas>
+    <button id="clickme">click me</button>
+    <button id="refresh">refresh</button>
+    <img src="" alt="" id="imageCanvas">
 </body>
 
 <style type="text/css">
@@ -64,6 +67,21 @@ function draw(e) {
 canvas.addEventListener('mousedown', startPosition); // Нажатие кнопки мыши
 canvas.addEventListener('mouseup', endPosition); // Отпускание кнопки мыши
 canvas.addEventListener('mousemove', draw); // Движение мыши
+
+// Обработчик событий тач-скрина
+canvas.addEventListener('touchstart', startPosition); // Нажатие кнопки тач-скрин
+canvas.addEventListener('touchend', endPosition); // Отпускание кнопки тач-скрин
+canvas.addEventListener('touchmove', draw); // Движение по тач-скрину
+
+document.getElementById("clickme").addEventListener("click", () => {
+    const img = canvas.toDataURL('image/png');
+    document.getElementById('imageCanvas').src = img;
+})
+
+document.getElementById("refresh").addEventListener("click", () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+})
+
 
 </script>
 
