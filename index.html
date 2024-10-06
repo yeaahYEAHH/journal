@@ -3,15 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="./fontawesome/css/all.min.css">
     <title>Journal</title>
 </head>
 
-<body>
-    <canvas id="drawingCanvas" width="400" height="400"></canvas>
+
+<body class="bg-dark text-white">
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+    Launch static backdrop modal
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content bg-dark">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Добавление</h1>
+                <button type="button" data-bs-dismiss="modal" class="btn btn-danger" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Understood</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table text-white">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Дата</th>
+            <th scope="col">Сотрудник</th>
+            <th scope="col">Наименование МЦ</th>
+            <th scope="col">Подпись на выдачу</th>
+            <th scope="col">
+                <button type="button" class="btn btn-dark">
+                    <i class="fa-solid fa-retweet"></i>
+                </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr id="row">
+                <th scope="row">1</th>
+                <td>10:00:31 31.03.24</td>
+                <td>Прокопенко Владтслав Николаевич</td>
+                <td>Машина времени</td>
+                <td id="signature"><img src="" alt="" id="imageCanvas"></td>
+                <td>
+                    <button type="button" class="btn btn-light">
+                        <i class="fa-solid fa-minus"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+    <canvas id="drawingCanvas" width="700" height="300"></canvas>
     <button id="clickme">click me</button>
     <button id="refresh">refresh</button>
-    <img src="" alt="" id="imageCanvas">
-</body>
+    
+
 
 <style type="text/css">
     body {
@@ -21,12 +80,26 @@
 
     #drawingCanvas {
       border: #000000 1px solid;
+      background-color: white;
     }
+
+    #imageCanvas{
+        height: 40px;
+    }
+
+    #signature{
+        text-align: center;
+        background-color: white;
+    }
+
+
 </style>
 
 <script>
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas.getContext('2d');
+
+
 
 // Переменные для отслеживания состояния кисточки
 let painting = false;
@@ -48,7 +121,7 @@ function draw(e) {
     if (!painting) return; // Если кнопка не нажата, не рисовать
 
     // Настройки кисти
-    ctx.lineWidth = 1; // Толщина линии
+    ctx.lineWidth = 3; // Толщина линии
     ctx.strokeStyle = 'black'; // Цвет кисти
 
     // Получаем координаты мыши относительно холста
@@ -85,4 +158,5 @@ document.getElementById("refresh").addEventListener("click", () => {
 
 </script>
 
+<script src="./bootstrap/bootstrap.bundle.min.js"></script>
 </html>
