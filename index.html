@@ -10,65 +10,14 @@
 
 
 <body class="bg-dark text-white">
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-    Launch static backdrop modal
-    </button>
-
-    <!-- Modal -->
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content bg-dark">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Добавление</h1>
-                <button type="button" data-bs-dismiss="modal" class="btn btn-danger" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Understood</button>
-            </div>
-            </div>
-        </div>
-    </div>
-
-    <table class="table text-white">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Дата</th>
-            <th scope="col">Сотрудник</th>
-            <th scope="col">Наименование МЦ</th>
-            <th scope="col">Подпись на выдачу</th>
-            <th scope="col">
-                <button type="button" class="btn btn-dark">
-                    <i class="fa-solid fa-retweet"></i>
-                </button>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-            <tr id="row">
-                <th scope="row">1</th>
-                <td>10:00:31 31.03.24</td>
-                <td>Прокопенко Владтслав Николаевич</td>
-                <td>Машина времени</td>
-                <td id="signature"><img src="" alt="" id="imageCanvas"></td>
-                <td>
-                    <button type="button" class="btn btn-light">
-                        <i class="fa-solid fa-minus"></i>
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</body>
-
     <canvas id="drawingCanvas" width="700" height="300"></canvas>
+    <input type="text" id="name" placeholder="name">
+    <input type="text" id="product" placeholder="product">
     <button id="clickme">click me</button>
     <button id="refresh">refresh</button>
+</body>
+
+    
     
 
 
@@ -146,9 +95,30 @@ canvas.addEventListener('touchstart', startPosition); // Нажатие кноп
 canvas.addEventListener('touchend', endPosition); // Отпускание кнопки тач-скрин
 canvas.addEventListener('touchmove', draw); // Движение по тач-скрину
 
+let name = document.getElementById('name'),
+    product = document.getElementById('product');
+
 document.getElementById("clickme").addEventListener("click", () => {
-    const img = canvas.toDataURL('image/png');
-    document.getElementById('imageCanvas').src = img;
+
+    const imageData = canvas.toDataURL('image/png');
+    // document.getElementById('imageCanvas').src = img;
+
+    const json = {
+        name: name.value,
+        product: product.value,
+        image: imageData
+    }
+
+    // AJAX-запрос для отправки данных на сервер
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'server.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            console.log('Image saved: ' + xhr.responseText);
+        }
+    };
+    xhr.send(JSON.stringify(json));
 })
 
 document.getElementById("refresh").addEventListener("click", () => {
