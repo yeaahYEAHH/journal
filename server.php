@@ -1,20 +1,24 @@
 <?php
-class Test{
-    public $id;
-    public $date;
-    public $name;
-    public $product;
-    public $url;
+class Element{
+    public int $id;
+    public string $date;
+    public string $name;
+    public string $product;
+    public string $url;
+    public string $hash;
 
-    function __construct($id, $name, $product, $url){
+    function __construct(int $id, string $name, string $product, string $url){
         $this->id = $id;
         $this->date = date("d.m.Y H:i:s");
         $this->name = $name;
         $this->product = $product;
         $this->url = $url;
     }
-}
 
+    function get_keys() : array{
+        return array_keys(get_object_vars($this));
+    }
+}
 $json_data = file_get_contents('data.json');
 $data_list = json_decode($json_data, true); 
 
@@ -22,33 +26,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $json_res = file_get_contents('php://input');
     $data = json_decode($json_res, true);
 
-    // Extract base64 image data and decode it
     $data_image = explode(',', $data['image'])[1]; 
     $data_image = base64_decode($data_image);
 
-    // Ensure image directory exists
     if (!is_dir('./image/')) {
         mkdir('./image/', 0777, true);
     }
 
-    $file_name = 'id_' . count($data_list) . '.png';
+    $file_name = uniqid('ebat_id_') . '.png';
     $file_path = './image/' . $file_name;
 
-    // Create new Test object
-    $object = new Test(count($data_list), $data['name'], $data['product'], $file_path);
+    $object = new Element(count($data_list), $data['name'], $data['product'], $file_path);
 
-    // Add new object to the data list
     array_push($data_list, $object);
 
-    // Save the image and updated JSON data
     file_put_contents($file_path, $data_image);
     file_put_contents('data.json', json_encode($data_list));
-    file_put_contents('test.txt', $data['image']);
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'DELETE'){  
 
     $id = file_get_contents('php://input');
+
+    unlink($data_list[0]['url']);
     unset($data_list[$id]);
 
     $data_list = array_values($data_list);
@@ -60,7 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'DELETE'){
     file_put_contents('data.json', json_encode($data_list));
 }
 
-echo $json_data;
+// echo $data_list[0]->url;
+var_dump($data_list[0]['url']);
+// echo $json_data;
 ?>
 
 

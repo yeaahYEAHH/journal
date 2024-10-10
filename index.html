@@ -10,36 +10,139 @@
 
 
 <body class="bg-dark text-white">
-    <canvas id="drawingCanvas" width="700" height="300"></canvas>
-    <input type="text" id="name" placeholder="name">
-    <input type="text" id="product" placeholder="product">
-    <button id="clickme">click me</button>
-    <button id="refresh">refresh</button>
+    <ul class="nav justify-content-between p-1">
+        <li class="nav-item">
+            <button type="button" class="btn btn-outline-warning" id="refresh">
+                <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
+        </li>
+        <li class="nav-item">
+            <button type="button" class="btn btn-outline-success"  data-bs-toggle="modal" data-bs-target="#add">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+        </li>
+    </ul>
+
+    
+
+    <div class="container">
+        <div class="row">
+            <p class="col" id="ID">ID</p>
+            <p class="col">Дата</p>
+            <p class="col">Сотрудник</p>
+            <p class="col">Наименование МЦ</p>
+            <p class="col" id="none">Подпись</p>
+        </div>
+
+        
+        <div id="list">
+            
+        </div>
+    </div>
+
+    <div class="modal fade" id="add">
+        <div class="modal-dialog modal-fullscreen">
+          <div class="modal-content bg-dark">
+            <div class="modal-body d-flex flex-column" id="body">
+                <div class="col-md-auto d-flex flex-column p-1 gap-1">
+                    <input type="text" class="form-control" id="name" placeholder="ФИО" required>
+                    <input type="text" class="form-control" id="product" placeholder="Наименование МЦ" required>
+                </div>
+                <div class="col d-flex justify-content-center align-items-center">
+                    <canvas id="drawingCanvas"></canvas>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" id="close">Закрыть</button>
+              <button type="button" class="btn btn-outline-success" id="save" data-bs-dismiss="modal">Сохранить</button>
+            </div>
+          </div>
+        </div>
+      </div>
 </body>
 
-    
-    
-
-
 <style type="text/css">
-    body {
-      margin: 0;
-      padding: 0;
-    }
+*{
+    margin: 0;
+    padding: 0;
+}
 
-    #drawingCanvas {
-      border: #000000 1px solid;
-      background-color: white;
-    }
+html{
+    width: 100vw;
+    height: 100vh;
+}
 
-    #imageCanvas{
-        height: 40px;
-    }
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
 
+#drawingCanvas {
+    border: #000000 1px solid;
+    background-color: white;
+}
+
+#imageCanvas{
+    height: 40px;
+}
+
+#signature{
+    text-align: center;
+    background-color: white;
+}
+
+#row{
+    cursor: pointer;
+    transition: .3s background-color;
+}
+
+#row:hover{
+    background-color: brown;
+}
+
+#modal-body{
+    overflow: hidden;
+}
+
+#item{
+    cursor: pointer;
+    transition: .3s background-color;
+}
+
+#item:hover{
+    background-color: brown;
+}
+
+#list{
+    max-height: 80%;
+    overflow-y: scroll;
+    
+}
+
+@media (max-width: 430px) {
     #signature{
-        text-align: center;
-        background-color: white;
+        display: none;
     }
+
+    #none{
+        display: none;
+    }
+}
+
+@media (max-width: 430px) {
+    #signature{
+        display: none;
+    }
+
+    #none{
+        display: none;
+        
+    }
+}
+
 
 
 </style>
@@ -47,84 +150,129 @@
 <script>
 const canvas = document.getElementById('drawingCanvas');
 const ctx = canvas.getContext('2d');
-
-
-
-// Переменные для отслеживания состояния кисточки
 let painting = false;
 
-// Начать рисование
-function startPosition(e) {
-    painting = true;
-    draw(e); // Чтобы сразу нарисовать точку, где нажата кнопка мыши
-}
+canvas.width = window.screen.width * 0.9;
+canvas.height = window.screen.height * 0.5;
 
-// Завершить рисование
-function endPosition() {
-    painting = false;
-    ctx.beginPath(); // Прерывает текущий путь (для прерывистых линий)
-}
-
-// Рисовать
-function draw(e) {
-    if (!painting) return; // Если кнопка не нажата, не рисовать
-
-    // Настройки кисти
-    ctx.lineWidth = 3; // Толщина линии
-    ctx.strokeStyle = 'black'; // Цвет кисти
-
-    // Получаем координаты мыши относительно холста
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    // Рисование
-    ctx.lineTo(x, y); // Линия до текущей позиции мыши
-    ctx.stroke(); // Отобразить линию
-    ctx.beginPath(); // Новая точка начала линии
-    ctx.moveTo(x, y); // Начать рисовать с текущей позиции
-}
-
-// Обработчики событий мыши
-canvas.addEventListener('mousedown', startPosition); // Нажатие кнопки мыши
-canvas.addEventListener('mouseup', endPosition); // Отпускание кнопки мыши
-canvas.addEventListener('mousemove', draw); // Движение мыши
-
-// Обработчик событий тач-скрина
-canvas.addEventListener('touchstart', startPosition); // Нажатие кнопки тач-скрин
-canvas.addEventListener('touchend', endPosition); // Отпускание кнопки тач-скрин
-canvas.addEventListener('touchmove', draw); // Движение по тач-скрину
-
-let name = document.getElementById('name'),
-    product = document.getElementById('product');
-
-document.getElementById("clickme").addEventListener("click", () => {
-
-    const imageData = canvas.toDataURL('image/png');
-    // document.getElementById('imageCanvas').src = img;
-
-    const json = {
-        name: name.value,
-        product: product.value,
-        image: imageData
-    }
-
-    // AJAX-запрос для отправки данных на сервер
+function deleteById( id ){
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'server.php', true);
+    xhr.open('DELETE', 'server.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(id);
+}
+
+function render( obj ){
+    let list = document.getElementById('list');
+
+    list.innerHTML = ""
+    for(let item of obj){
+        list.innerHTML += `<div class="row" id="item">
+            <p class="col" id="id">${item.id}</p>
+            <p class="col">${item.date}</p>
+            <p class="col">${item.name}</p>
+            <p class="col">${item.product}</p>
+            <p class="col" id="signature"><img src="${item.url}" id="imageCanvas" alt="wow"></p>
+        </div>`
+    }
+}
+
+function refresh(){
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', 'server.php', true);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            console.log('Image saved: ' + xhr.responseText);
+            let data = JSON.parse(xhr.responseText);
+
+            render(data);
+        
+            document.querySelectorAll('#item').forEach((item, index) => {
+                item.addEventListener("click", () => {
+                    let isDelete = confirm(`Уверены, что хотите удалить?`);
+                    if(isDelete){
+                        deleteById(index);
+                        item.style.display = "none";
+                    }
+                })
+            })
         }
     };
+    xhr.send();
+}
+
+function getTouchPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const touch = e.touches[0]; 
+    return {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top
+    };
+}
+
+function startTouch(e) {
+    e.preventDefault(); 
+    painting = true;
+    const pos = getTouchPos(e);
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y); 
+}
+
+function endTouch() {
+    painting = false;
+    ctx.beginPath(); 
+}
+
+function drawTouch(e) {
+    if (!painting) return;
+    e.preventDefault(); 
+
+    const pos = getTouchPos(e);
+
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#0472D1';
+
+    ctx.lineTo(pos.x, pos.y); 
+    ctx.stroke(); 
+    ctx.beginPath(); 
+    ctx.moveTo(pos.x, pos.y); 
+}
+
+canvas.addEventListener('touchstart', startTouch);
+canvas.addEventListener('touchend', endTouch);
+canvas.addEventListener('touchmove', drawTouch);
+
+let inputName = document.querySelector('#name'),
+    inputProduct = document.querySelector('#product');
+
+document.getElementById('save').addEventListener('click', function() {
+    const imageData = canvas.toDataURL('image/png');
+    const xhr = new XMLHttpRequest();
+    const json = {
+        name: inputName.value,
+        product: inputProduct.value,
+        image: imageData
+    };
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    xhr.open('POST', 'server.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send(JSON.stringify(json));
+
+    refresh()
+});
+
+document.getElementById('refresh').addEventListener('click', () => {
+    refresh()
 })
 
-document.getElementById("refresh").addEventListener("click", () => {
+refresh();
+
+document.getElementById('close').addEventListener('click', () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 })
-
 
 </script>
 
